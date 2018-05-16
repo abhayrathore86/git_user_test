@@ -1,4 +1,6 @@
 <?php
+
+ //$user_cont = count($user_data);
  $user_data_json = json_decode(json_encode($user_data,true));
  foreach ($user_data_json->items as $all_data){
      ?>
@@ -8,11 +10,11 @@
                  <div class='side_image'>
                       <span>{{ $all_data->login  }}</span>
                       <span><a href='{{ $all_data->followers_url}}'>{{ $all_data->followers_url}}</a></span>
-                      <input type="hidden" value="{{ $all_data->followers_url}}" id="hiddenurl">
+                      <input type="hidden" value="{{ $all_data->followers_url}}" class="hiddenurl">
                  </div>
-                 <span id='loadmore'>Load More</span>
+                 <span class='loadmore' data-id="{{$all_data->id}}">Load More</span>
             </div>
-            <div id="result_followers_data"></div>
+            <div class="result_followers_data followers_data_{{$all_data->id}}"></div>
         </div>
      <?php
  }
@@ -42,7 +44,7 @@
     margin-left: 15px;
     font-size: 18px;
 }
-#loadmore{
+.loadmore{
     background-color: #008CBA;
     border: none;
     color: white;
@@ -56,7 +58,7 @@
     margin: 20px 15px;
     cursor: pointer;
 }
-#loadmore:hover{
+.loadmore:hover{
  color:#008CBA;
  background-color: #fff;
 }
@@ -64,7 +66,7 @@
 float:left;
 max-width: 100px;
  }
-#result_followers_data{
+.result_followers_data{
     display: block;
     overflow: hidden;
     clear: both;
@@ -76,8 +78,10 @@ max-width: 100px;
 <script type="text/javascript">
     jQuery(document).ready(function() {
         var timer = null;
-        jQuery('#loadmore').on('click',function() {
-                var hiddenurl = jQuery('#hiddenurl').val();
+        jQuery('.loadmore').on('click',function() {
+
+                var hiddenurl = jQuery('.hiddenurl').val();
+                var id = jQuery(this).data( "id" );
                 jQuery.ajax({
                     url: '/fetch_followers',
                     type: 'post',
@@ -86,10 +90,11 @@ max-width: 100px;
                         "val_text": hiddenurl
                     },
                     success: function(data) {
-                        jQuery('#result_followers_data').html('');
-                        jQuery('#result_followers_data').append(data);
+                        jQuery('.followers_data_'+id).html('');
+                        jQuery('.followers_data_'+id).append(data);
                     }
                 });
+
         });
     });
 </script>
